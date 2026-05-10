@@ -106,8 +106,6 @@ final class HUDView: NSView {
     override var isFlipped: Bool { false }
 
     override func draw(_ dirtyRect: NSRect) {
-        let ctx = NSGraphicsContext.current?.cgContext
-
         // Rounded background panel
         let panelRect = bounds.insetBy(dx: 0, dy: 0)
         let panelPath = NSBezierPath(roundedRect: panelRect, xRadius: 22, yRadius: 22)
@@ -164,7 +162,5 @@ final class HUDView: NSView {
             height: textSize.height
         )
         str.draw(in: textRect)
-
-        _ = ctx
     }
 }
