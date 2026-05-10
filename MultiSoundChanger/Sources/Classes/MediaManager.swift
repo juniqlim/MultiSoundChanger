@@ -43,37 +43,7 @@ final class MediaManagerImpl: MediaManager {
     }
     
     func showOSD(volume: Float, chicletsCount: Int = 16) {
-        NSLog("MSC: showOSD called, volume=\(volume)")
-        guard let osdBundle = Bundle(path: "/System/Library/PrivateFrameworks/OSD.framework"),
-              osdBundle.load(),
-              let osdClass = NSClassFromString("OSDManager") as? NSObject.Type else {
-            return
-        }
-
-        guard let manager = osdClass.perform(NSSelectorFromString("sharedManager"))?.takeUnretainedValue() as? NSObject else {
-            return
-        }
-
-        let mouseloc: NSPoint = NSEvent.mouseLocation
-        var displayForPoint: CGDirectDisplayID = 0
-        var count: UInt32 = 0
-
-        if CGGetDisplaysWithPoint(mouseloc, 1, &displayForPoint, &count) != .success {
-            Logger.warning(Constants.InnerMessages.getDisplayError)
-            displayForPoint = CGMainDisplayID()
-        }
-
-        let image: Int64 = (volume == 0) ? 4 : 3 // OSDGraphicSpeakerMuted / OSDGraphicSpeaker
-        let volumeStep: Float = 100 / Float(chicletsCount)
-
-        let sel = NSSelectorFromString("showImage:onDisplayID:priority:msecUntilFade:filledChiclets:totalChiclets:locked:")
-        NSLog("MSC OSD: responds=\(manager.responds(to: sel)), volume=\(volume), filled=\(UInt32(volume / volumeStep)), total=\(UInt32(100.0 / volumeStep))")
-        if manager.responds(to: sel) {
-            let imp = manager.method(for: sel)
-            typealias ShowImageFunc = @convention(c) (NSObject, Selector, Int64, UInt32, UInt32, UInt32, UInt32, UInt32, Bool) -> Void
-            let f = unsafeBitCast(imp, to: ShowImageFunc.self)
-            f(manager, sel, image, displayForPoint, 0x1F4, 1_000, UInt32(volume / volumeStep), UInt32(100.0 / volumeStep), false)
-        }
+        VolumeHUD.shared.show(volume: volume, muted: volume == 0)
     }
     
     // MARK: Private
