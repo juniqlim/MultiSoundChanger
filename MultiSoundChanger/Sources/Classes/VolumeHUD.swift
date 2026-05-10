@@ -119,9 +119,14 @@ final class HUDView: NSView {
             let conf = NSImage.SymbolConfiguration(pointSize: 44, weight: .regular)
             let configured = img.withSymbolConfiguration(conf) ?? img
             configured.isTemplate = true
-            NSColor.white.set()
-            configured.draw(in: iconRect, from: .zero, operation: .sourceOver, fraction: 1.0,
-                            respectFlipped: true, hints: [.interpolation: NSImageInterpolation.high.rawValue])
+            let tinted = NSImage(size: configured.size, flipped: false) { rect in
+                configured.draw(in: rect)
+                NSColor.white.set()
+                rect.fill(using: .sourceAtop)
+                return true
+            }
+            tinted.draw(in: iconRect, from: .zero, operation: .sourceOver, fraction: 1.0,
+                        respectFlipped: true, hints: [.interpolation: NSImageInterpolation.high.rawValue])
         }
 
         // Chiclets
