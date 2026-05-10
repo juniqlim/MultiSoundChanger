@@ -32,7 +32,9 @@ final class ApplicationControllerImp: ApplicationController {
 
 extension ApplicationControllerImp: MediaManagerDelegate {
     func onMediaKeyTap(mediaKey: MediaKey) {
+        NSLog("MSC: onMediaKeyTap called, key=\(mediaKey)")
         guard let selectedDeviceVolume = audioManager.getSelectedDeviceVolume() else {
+            NSLog("MSC: getSelectedDeviceVolume returned nil")
             return
         }
         
